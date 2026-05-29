@@ -139,11 +139,11 @@ const Avatar = ({ name, size = 'md', tint }) => {
 };
 
 // === Course card ===
-const CourseImage = ({ course, height, radius = 0 }) => (
-  <div className="ph-img" style={{ height, borderRadius: radius, background: `repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0 12px, rgba(255,255,255,0.06) 12px 24px), linear-gradient(135deg, ${course.tint}55, ${course.tint}15)`, position: 'relative', overflow: 'hidden' }}>
+const CourseImage = ({ course, height, aspect, radius = 0, fit = 'cover' }) => (
+  <div className="ph-img" style={{ height, aspectRatio: aspect, borderRadius: radius, background: `repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0 12px, rgba(255,255,255,0.06) 12px 24px), linear-gradient(135deg, ${course.tint}55, ${course.tint}15)`, position: 'relative', overflow: 'hidden' }}>
     {course.coverImage && (
       <img src={course.coverImage} alt={course.title} onError={(e) => { e.target.style.display = 'none'; }}
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }} />
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: fit, zIndex: 1 }} />
     )}
     {!course.coverImage && <span style={{ fontFamily: 'Anton, sans-serif', fontSize: 14, letterSpacing: '0.18em', color: 'rgba(255,255,255,0.65)', position: 'relative', zIndex: 2 }}>{course.cover}</span>}
     {course.tag && <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 3 }}><span className="badge badge-gold">{course.tag}</span></div>}
@@ -155,7 +155,7 @@ const CourseCard = ({ course, onClick, footerSlot }) => (
        onMouseEnter={e => { if (onClick) { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}}
        onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'translateY(0)'; }}
        onClick={onClick}>
-    <CourseImage course={course} height={150} />
+    <CourseImage course={course} aspect="1 / 1" />
     <div style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
       <div className="row" style={{ gap: 8 }}>
         <span className="badge badge-muted">{course.category}</span>
