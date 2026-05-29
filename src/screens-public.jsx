@@ -1,157 +1,180 @@
-import React, { useState } from 'react';
+// Public-facing screens
+import React, { useState, useEffect } from 'react';
 import { SOIC_DATA, fmtEGP, fmtDate, fmtShortDate, initials } from './data.js';
 import { Icon, Brand, Avatar, CourseCard, CourseImage, useT } from './components.jsx';
 
-// Public-facing screens (landing, course browse, course detail, auth)
 
 const Landing = ({ go, signIn }) => {
+  const { tr } = useT();
   const featured = SOIC_DATA.courses.slice(0, 3);
   return (
-    <div style={{ background: 'var(--bg)' }}>
-      {/* Top nav */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 56px', borderBottom: '1px solid var(--border)' }}>
-        <Brand role="SCHOOL OF CINEMA" />
-        <div className="row" style={{ gap: 28, fontSize: 14, fontWeight: 500 }}>
-          <a className="muted" style={{ cursor: 'pointer' }} onClick={() => go('browse')}>Courses</a>
-          <a className="muted" style={{ cursor: 'pointer' }} onClick={() => go('instructors')}>Instructors</a>
-          <a className="muted" style={{ cursor: 'pointer' }} onClick={() => go('about')}>About</a>
-          <a className="muted" style={{ cursor: 'pointer' }} onClick={() => go('about')}>Contact</a>
-        </div>
-        <div className="row" style={{ gap: 10 }}>
-          <button className="btn btn-ghost" onClick={() => go('auth-signin')}>Sign In</button>
-          <button className="btn btn-primary" onClick={() => go('auth-signup')}>Get Started</button>
-        </div>
-      </div>
+    <div className="public-page">
+      <PublicTopNav go={go} />
 
-      {/* Hero */}
-      <section style={{ padding: '80px 56px 100px', position: 'relative', overflow: 'hidden' }}>
+      {/* Hero — navy */}
+      <section className="section-navy hero-navy" style={{ padding: '120px 56px 100px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 60, alignItems: 'center' }}>
           <div>
             <div className="row" style={{ gap: 10, marginBottom: 24 }}>
-              <span className="badge badge-gold">Cairo · Online · Hybrid</span>
-              <span className="badge badge-muted">2026 Cohorts Open</span>
+              <span className="badge badge-gold">{tr('Cairo · Online · Hybrid', 'القاهرة · أونلاين · هجين')}</span>
+              <span className="badge badge-muted">{tr('2026 Cohorts Open', 'دفعات 2026 مفتوحة')}</span>
             </div>
-            <h1 style={{ fontFamily: 'Anton, sans-serif', fontSize: 88, lineHeight: 0.95, margin: 0, letterSpacing: '0.01em' }}>
-              LEARN CINEMA<br />
-              FROM PEOPLE WHO<br />
-              <span style={{ color: 'var(--gold)' }}>ACTUALLY MAKE IT.</span>
+            <h1 style={{ fontFamily: 'Anton, sans-serif', fontSize: 88, lineHeight: 0.95, margin: 0, letterSpacing: '0.01em', color: '#fff' }}>
+              {tr('LEARN CINEMA', 'اتعلم سينما')}<br />
+              {tr('FROM PEOPLE WHO', 'مع ناس')}<br />
+              <span style={{ color: 'var(--gold)' }}>{tr('ACTUALLY MAKE IT.', 'بتصنعها فعلًا.')}</span>
             </h1>
-            <p style={{ fontSize: 17, color: 'var(--text-muted)', maxWidth: 560, marginTop: 24, lineHeight: 1.6 }}>
-              SOIC is a live-online cinema academy in Egypt. Diplomas and short workshops in directing, cinematography,
-              editing, sound, and acting — taught by working filmmakers and Cinema Institute faculty.
+            <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.7)', maxWidth: 560, marginTop: 24, lineHeight: 1.6 }}>
+              {tr(
+                'SOIC is a live-online cinema academy in Egypt. Diplomas and short workshops in directing, cinematography, editing, sound, and acting — taught by working filmmakers and Cinema Institute faculty.',
+                'SOIC أكاديمية سينما بالبث الحي في مصر. دبلومات وورش قصيرة في الإخراج والتصوير والمونتاج والصوت والتمثيل — مع صنّاع أفلام شغّالين وأساتذة معهد السينما.'
+              )}
             </p>
             <div className="row" style={{ gap: 12, marginTop: 36 }}>
               <button className="btn btn-primary btn-lg" onClick={() => go('browse')}>
-                Browse courses <Icon name="arrow" size={16} />
+                {tr('Browse courses', 'تصفّح الكورسات')} <Icon name="arrow" size={16} />
               </button>
               <button className="btn btn-secondary btn-lg" onClick={() => go('auth-signup')}>
-                Apply for next cohort
+                {tr('Apply for next cohort', 'قدّم للدفعة القادمة')}
               </button>
             </div>
             <div className="row" style={{ gap: 36, marginTop: 56 }}>
               <div>
-                <div style={{ fontFamily: 'Anton', fontSize: 36 }}>320+</div>
-                <div className="muted" style={{ fontSize: 13 }}>Graduates since 2023</div>
+                <div style={{ fontFamily: 'Anton', fontSize: 36, color: '#fff' }}>320+</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>{tr('Graduates since 2023', 'خريّج منذ 2023')}</div>
               </div>
               <div>
-                <div style={{ fontFamily: 'Anton', fontSize: 36 }}>24</div>
-                <div className="muted" style={{ fontSize: 13 }}>Industry instructors</div>
+                <div style={{ fontFamily: 'Anton', fontSize: 36, color: '#fff' }}>24</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>{tr('Industry instructors', 'محاضر من السوق')}</div>
               </div>
               <div>
-                <div style={{ fontFamily: 'Anton', fontSize: 36 }}>2</div>
-                <div className="muted" style={{ fontSize: 13 }}>Branches: Zahraa El Maadi & Katameya</div>
+                <div style={{ fontFamily: 'Anton', fontSize: 36, color: '#fff' }}>2</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>{tr('Branches: Zahraa El Maadi & Katameya', 'فرعين: زهراء المعادي والقطامية')}</div>
               </div>
             </div>
           </div>
           {/* Right poster */}
           <div className="frame-corners" style={{ position: 'relative', aspectRatio: '4/5', borderRadius: 16, overflow: 'hidden',
-              background: 'radial-gradient(circle at 30% 20%, #1f2956, #0a0e22 60%)',
-              border: '1px solid var(--border)' }}>
+              background: 'radial-gradient(circle at 30% 20%, #1f2956, #050d2a 60%)',
+              border: '1px solid rgba(255,255,255,0.08)' }}>
             <div style={{ position: 'absolute', inset: 0, background: 'repeating-linear-gradient(180deg, rgba(255,255,255,0) 0 38px, rgba(255,255,255,0.03) 38px 39px)' }} />
             <div style={{ position: 'absolute', bottom: 32, left: 32, right: 32 }}>
-              <div className="badge badge-gold" style={{ marginBottom: 12 }}>NOW SHOOTING</div>
-              <div style={{ fontFamily: 'Anton', fontSize: 52, lineHeight: 0.95 }}>FILMMAKING<br />DIPLOMA<br /><span style={{ color: 'var(--gold)' }}>2026</span></div>
-              <div className="muted" style={{ marginTop: 10, fontSize: 13 }}>Dec 8 · 12 weeks · Live online + on-set</div>
+              <div className="badge badge-gold" style={{ marginBottom: 12 }}>{tr('NOW SHOOTING', 'تصوير جارٍ')}</div>
+              <div style={{ fontFamily: 'Anton', fontSize: 52, lineHeight: 0.95, color: '#fff' }}>{tr('FILMMAKING', 'دبلومة')}<br />{tr('DIPLOMA', 'صناعة الأفلام')}<br /><span style={{ color: 'var(--gold)' }}>2026</span></div>
+              <div style={{ marginTop: 10, fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>{tr('Dec 8 · 12 weeks · Live online + on-set', '8 ديسمبر · 12 أسبوع · بث حي + بلاتوه')}</div>
             </div>
-            {/* Decorative film perfs */}
-            <div style={{ position: 'absolute', top: 0, bottom: 0, left: 8, width: 12, background: 'repeating-linear-gradient(180deg, var(--bg) 0 14px, transparent 14px 22px)' }} />
-            <div style={{ position: 'absolute', top: 0, bottom: 0, right: 8, width: 12, background: 'repeating-linear-gradient(180deg, var(--bg) 0 14px, transparent 14px 22px)' }} />
+            <div style={{ position: 'absolute', top: 0, bottom: 0, left: 8, width: 12, background: 'repeating-linear-gradient(180deg, #0a1138 0 14px, transparent 14px 22px)' }} />
+            <div style={{ position: 'absolute', top: 0, bottom: 0, right: 8, width: 12, background: 'repeating-linear-gradient(180deg, #0a1138 0 14px, transparent 14px 22px)' }} />
           </div>
         </div>
       </section>
 
-      {/* Categories strip */}
-      <section style={{ background: 'var(--surface)', padding: '24px 56px', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-        <div className="row" style={{ gap: 28, overflowX: 'auto', flexWrap: 'wrap' }}>
-          {['Directing', 'Cinematography', 'Editing', 'Sound Design', 'Screenwriting', 'Acting', 'Color Grading', 'Underwater', 'Documentary'].map((c, i) => (
-            <div key={c} className="row" style={{ gap: 8, color: 'var(--text-muted)', fontSize: 14, fontWeight: 500 }}>
-              <span className="dim mono" style={{ fontSize: 11 }}>0{i+1}</span>
-              {c}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Featured courses */}
-      <section style={{ padding: '80px 56px' }}>
-        <div className="row" style={{ justifyContent: 'space-between', marginBottom: 32 }}>
+      {/* Featured courses — light */}
+      <section className="section-light" style={{ padding: '100px 56px' }}>
+        <div className="row" style={{ justifyContent: 'space-between', marginBottom: 40 }}>
           <div>
-            <div className="dim mono" style={{ fontSize: 12, letterSpacing: '0.2em', marginBottom: 6 }}>// CURRENT PROGRAMS</div>
-            <h2 className="h1">Featured cohorts</h2>
+            <div className="mono" style={{ fontSize: 12, letterSpacing: '0.2em', marginBottom: 6, color: '#8a90a8' }}>// {tr('CURRENT PROGRAMS', 'البرامج الحالية')}</div>
+            <h2 className="h1">{tr('Featured cohorts', 'الدفعات المميزة')}</h2>
+            <p className="muted" style={{ fontSize: 16, marginTop: 12, maxWidth: 540, lineHeight: 1.6 }}>
+              {tr(
+                'Live cohorts taught by working filmmakers — every program ends with a real graduation project.',
+                'دفعات مباشرة مع صنّاع أفلام شغّالين — كل برنامج بينتهي بمشروع تخرج حقيقي.'
+              )}
+            </p>
           </div>
-          <button className="btn btn-secondary" onClick={() => go('browse')}>All courses <Icon name="arrow" size={14} /></button>
+          <button className="btn btn-secondary" onClick={() => go('browse')}>{tr('All courses', 'كل الكورسات')} <Icon name="arrow" size={14} /></button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
           {featured.map(c => <CourseCard key={c.id} course={c} onClick={() => go('course-' + c.id)} />)}
         </div>
       </section>
 
-      {/* How it works */}
-      <section style={{ padding: '64px 56px', background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
-        <div className="dim mono" style={{ fontSize: 12, letterSpacing: '0.2em', marginBottom: 6 }}>// HOW IT WORKS</div>
-        <h2 className="h1" style={{ marginBottom: 40 }}>From application to graduation reel.</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
-          {[
-            { n: '01', t: 'Apply & enroll', d: 'Pick a course, pay via InstaPay or card. Admin approves your payment in under 24h.' },
-            { n: '02', t: 'Join live lectures', d: 'Auto-added to your calendar. We email you 15 minutes before each session goes live.' },
-            { n: '03', t: 'Take notes in-class', d: 'Timestamp notes during the lecture so you can jump straight to that moment in the recording.' },
-            { n: '04', t: 'Build a real reel', d: 'Final project, certificate, and a path to the Egyptian Film Professions Syndicate.' },
-          ].map(s => (
-            <div key={s.n} className="card flat" style={{ padding: 24 }}>
-              <div className="display" style={{ fontSize: 40, color: 'var(--gold)' }}>{s.n}</div>
-              <h3 className="h3" style={{ marginTop: 14 }}>{s.t}</h3>
-              <p className="muted" style={{ fontSize: 14, marginTop: 8, lineHeight: 1.5 }}>{s.d}</p>
+      {/* Categories — navy strip */}
+      <section className="section-navy" style={{ padding: '32px 56px' }}>
+        <div className="row" style={{ gap: 36, overflowX: 'auto', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          {['Directing', 'Cinematography', 'Editing', 'Sound Design', 'Screenwriting', 'Acting', 'Color Grading', 'Underwater', 'Documentary'].map((c, i) => (
+            <div key={c} className="row" style={{ gap: 8, color: 'rgba(255,255,255,0.75)', fontSize: 14, fontWeight: 500 }}>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>0{i+1}</span>
+              {c}
             </div>
           ))}
         </div>
       </section>
 
-      {/* Testimonial */}
-      <section style={{ padding: '80px 56px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
-        <div className="display" style={{ fontSize: 22, color: 'var(--gold)', marginBottom: 16 }}>★ ★ ★ ★ ★</div>
-        <blockquote style={{ fontFamily: 'Anton, sans-serif', fontSize: 36, maxWidth: 800, margin: '0 auto', lineHeight: 1.2 }}>
-          "I came in not knowing what an f-stop was. Three months later<br />I shot my graduation film on a RED."
-        </blockquote>
-        <div className="muted" style={{ marginTop: 20, fontSize: 14 }}>— Mohamed, SOIC graduate, Yemen</div>
+      {/* How it works — light */}
+      <section className="section-light" style={{ padding: '100px 56px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 60, marginBottom: 56, alignItems: 'flex-end' }}>
+          <div>
+            <div className="mono" style={{ fontSize: 12, letterSpacing: '0.2em', marginBottom: 6, color: '#8a90a8' }}>// {tr('HOW IT WORKS', 'كيف تشتغل')}</div>
+            <h2 className="h1" style={{ fontSize: 56, lineHeight: 1.05 }}>{tr('From application', 'من التقديم')}<br />{tr('to graduation reel.', 'لفيلم التخرج.')}</h2>
+          </div>
+          <p style={{ fontSize: 17, lineHeight: 1.7, color: '#5c6480', maxWidth: 540 }}>
+            {tr(
+              'Four steps — and at the end of them you walk out with real work to show. No filler, no padding.',
+              'أربع خطوات — وفي آخرها بتطلع بشغل حقيقي تعرضه. مفيش حشو، مفيش كلام فاضي.'
+            )}
+          </p>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
+          {[
+            { n: '01', t: tr('Apply & enroll', 'قدّم وانضم'), d: tr('Pick a course, pay via InstaPay or card. Admin approves your payment in under 24h.', 'اختار الكورس، ادفع بـ InstaPay أو فيزا. الإدارة بتعتمد الدفع في أقل من 24 ساعة.') },
+            { n: '02', t: tr('Join live lectures', 'احضر المحاضرات الحية'), d: tr('Auto-added to your calendar. We email you 15 minutes before each session goes live.', 'بتتضاف لتقويمك تلقائيًا. بنرسلك إيميل قبل كل محاضرة بـ 15 دقيقة.') },
+            { n: '03', t: tr('Take notes in-class', 'دوّن ملاحظاتك أثناء الحصة'), d: tr('Timestamp notes during the lecture so you can jump straight to that moment in the recording.', 'ملاحظات مرتبطة بالوقت عشان ترجع للحظة دي في التسجيل بضغطة.') },
+            { n: '04', t: tr('Build a real reel', 'ابني شو-ريل حقيقي'), d: tr('Final project, certificate, and a path to the Egyptian Film Professions Syndicate.', 'مشروع نهائي وشهادة وطريق لنقابة المهن السينمائية.') },
+          ].map(s => (
+            <div key={s.n} className="card" style={{ padding: 28 }}>
+              <div className="display" style={{ fontSize: 40, color: '#2d4ee0' }}>{s.n}</div>
+              <h3 className="h3" style={{ marginTop: 14 }}>{s.t}</h3>
+              <p className="muted" style={{ fontSize: 14, marginTop: 8, lineHeight: 1.6 }}>{s.d}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
-      {/* Footer */}
-      <footer style={{ padding: '40px 56px', borderTop: '1px solid var(--border)', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 40, background: 'var(--surface)' }}>
+      {/* Testimonial — navy */}
+      <section className="section-navy" style={{ padding: '100px 56px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ fontFamily: 'Anton, sans-serif', fontSize: 22, color: 'var(--gold)', marginBottom: 24, letterSpacing: '0.4em' }}>★ ★ ★ ★ ★</div>
+        <blockquote style={{ fontFamily: 'Anton, sans-serif', fontSize: 44, maxWidth: 900, margin: '0 auto', lineHeight: 1.15, color: '#fff' }}>
+          {tr(
+            '"I came in not knowing what an f-stop was. Three months later I shot my graduation film on a RED."',
+            '"دخلت ومش عارف يعني إيه فتحة عدسة. بعد 3 شهور صوّرت فيلم تخرجي على كاميرا RED."'
+          )}
+        </blockquote>
+        <div style={{ marginTop: 24, fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>{tr('— Mohamed, SOIC graduate, Yemen', '— محمد، خريّج SOIC، اليمن')}</div>
+      </section>
+
+      {/* CTA — light */}
+      <section className="section-light" style={{ padding: '100px 56px', textAlign: 'center' }}>
+        <div style={{ fontFamily: 'JetBrains Mono', fontSize: 12, letterSpacing: '0.2em', marginBottom: 14, color: '#8a90a8' }}>// {tr('READY?', 'مستعد؟')}</div>
+        <h2 className="h1" style={{ fontSize: 64, lineHeight: 1.05, maxWidth: 880, margin: '0 auto' }}>
+          {tr('Your next cohort starts ', 'دفعتك القادمة بتبدأ ')}<span style={{ color: '#2d4ee0' }}>{tr('December 8.', '8 ديسمبر.')}</span>
+        </h2>
+        <p style={{ fontSize: 17, marginTop: 18, color: '#5c6480', maxWidth: 580, margin: '18px auto 0', lineHeight: 1.7 }}>
+          {tr('Seats are limited — workshop admissions are interview-based and selective.', 'العدد محدود — قبول الورش بيكون بمقابلة شخصية واختيار انتقائي.')}
+        </p>
+        <div className="row" style={{ gap: 12, marginTop: 36, justifyContent: 'center' }}>
+          <button className="btn btn-primary btn-lg" onClick={() => go('auth-signup')}>{tr('Apply now', 'قدّم دلوقتي')} <Icon name="arrow" size={16} /></button>
+          <button className="btn btn-secondary btn-lg" onClick={() => go('browse')}>{tr('Browse all courses', 'تصفّح كل الكورسات')}</button>
+        </div>
+      </section>
+
+      {/* Footer — navy */}
+      <footer className="section-navy" style={{ padding: '56px 56px 32px', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 40 }}>
         <div>
           <Brand role="SCHOOL OF CINEMA" />
-          <p className="muted" style={{ marginTop: 16, fontSize: 13, maxWidth: 360, lineHeight: 1.6 }}>
-            Live-online cinema academy. Zahraa El Maadi · Katameya Gardens · streaming everywhere.
+          <p style={{ marginTop: 16, fontSize: 13, maxWidth: 360, lineHeight: 1.7, color: 'rgba(255,255,255,0.6)' }}>
+            {tr('Live-online cinema academy. Zahraa El Maadi · Katameya Gardens · streaming everywhere.', 'مدرسة سينما بالبث الحي. زهراء المعادي · القطامية جاردنز · بث في كل مكان.')}
           </p>
         </div>
         {[
-          { h: 'Programs', l: ['Filmmaking Diploma', 'Acting Workshop', 'Underwater Cinematography', 'Screenwriting'] },
-          { h: 'Company', l: ['About SOIC', 'Instructors', 'Press', 'Careers'] },
-          { h: 'Contact', l: ['+20 12 00 409 583', 'hello@soic.eg', 'WhatsApp', 'Instagram'] },
+          { h: tr('Programs', 'البرامج'), l: [tr('Filmmaking Diploma', 'دبلومة صناعة الأفلام'), tr('Acting Workshop', 'ورشة التمثيل'), tr('Underwater Cinematography', 'التصوير تحت المياه'), tr('Screenwriting', 'كتابة السيناريو')] },
+          { h: tr('Company', 'الشركة'), l: [tr('About SOIC', 'عن SOIC'), tr('Instructors', 'المحاضرون'), tr('Press', 'الصحافة'), tr('Careers', 'وظائف')] },
+          { h: tr('Contact', 'تواصل'), l: ['+20 12 00 409 583', 'hello@soic.eg', 'WhatsApp', 'Instagram'] },
         ].map(col => (
           <div key={col.h}>
-            <h4 className="h4" style={{ marginBottom: 14 }}>{col.h}</h4>
+            <h4 className="h4" style={{ marginBottom: 14, color: '#fff' }}>{col.h}</h4>
             <div className="col" style={{ gap: 8 }}>
-              {col.l.map(li => <div key={li} className="muted" style={{ fontSize: 13, cursor: 'pointer' }}>{li}</div>)}
+              {col.l.map(li => <div key={li} style={{ fontSize: 13, cursor: 'pointer', color: 'rgba(255,255,255,0.6)' }}>{li}</div>)}
             </div>
           </div>
         ))}
@@ -169,14 +192,8 @@ const BrowseCourses = ({ go }) => {
     (q === '' || c.title.toLowerCase().includes(q.toLowerCase()) || c.instructor.toLowerCase().includes(q.toLowerCase()))
   );
   return (
-    <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 56px', borderBottom: '1px solid var(--border)' }}>
-        <Brand role="SCHOOL OF CINEMA" onClick={() => go('landing')} />
-        <div className="row" style={{ gap: 10 }}>
-          <button className="btn btn-ghost" onClick={() => go('auth-signin')}>Sign In</button>
-          <button className="btn btn-primary" onClick={() => go('auth-signup')}>Get Started</button>
-        </div>
-      </div>
+    <div className="public-page" style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: 78 }}>
+      <PublicTopNav go={go} />
       <div style={{ padding: '40px 56px' }}>
         <div className="row" style={{ justifyContent: 'space-between', marginBottom: 32 }}>
           <div>
@@ -208,16 +225,8 @@ const CourseDetail = ({ courseId, go, role, onEnroll, onWishlist, isEnrolled, is
   const isPublic = role === 'public';
   const description = lang === 'ar' && course.descriptionAr ? course.descriptionAr : course.description;
   return (
-    <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-      {isPublic && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 56px', borderBottom: '1px solid var(--border)' }}>
-          <Brand role="SCHOOL OF CINEMA" onClick={() => go('landing')} />
-          <div className="row" style={{ gap: 10 }}>
-            <button className="btn btn-ghost" onClick={() => go('auth-signin')}>Sign In</button>
-            <button className="btn btn-primary" onClick={() => go('auth-signup')}>Get Started</button>
-          </div>
-        </div>
-      )}
+    <div className={isPublic ? "public-page" : ""} style={{ background: isPublic ? 'var(--bg)' : undefined, minHeight: isPublic ? '100vh' : undefined, paddingTop: isPublic ? 78 : 0 }}>
+      {isPublic && <PublicTopNav go={go} />}
       <div style={{ padding: isPublic ? '40px 56px' : 0 }}>
         <div className="row" style={{ marginBottom: 20, cursor: 'pointer' }} onClick={() => go(isPublic ? 'browse' : 'browse')}>
           <span className="muted" style={{ fontSize: 13 }}>← Back to courses</span>
@@ -508,7 +517,7 @@ const Auth = ({ mode, go, onSignIn }) => {
 const About = ({ go }) => {
   const { tr } = useT();
   return (
-    <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+    <div className="public-page" style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: 78 }}>
       <PublicTopNav go={go} />
 
       {/* Hero */}
@@ -689,7 +698,7 @@ const InstructorsPage = ({ go }) => {
   const { tr, lang } = useT();
   const instructors = SOIC_DATA.users.filter(u => u.role === 'instructor' && u.status === 'active' && u.bio);
   return (
-    <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+    <div className="public-page" style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: 78 }}>
       <PublicTopNav go={go} />
       <section style={{ padding: '80px 56px 40px' }}>
         <div className="dim mono" style={{ fontSize: 12, letterSpacing: '0.2em', marginBottom: 14 }}>// {tr('THE FACULTY', 'هيئة التدريس')}</div>
@@ -745,7 +754,7 @@ const InstructorDetail = ({ instructorId, go }) => {
   if (!i || i.role !== 'instructor') return <div style={{ padding: 40 }}>Instructor not found</div>;
   const courses = SOIC_DATA.courses.filter(c => (i.courses || []).includes(c.id));
   return (
-    <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+    <div className="public-page" style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: 78 }}>
       <PublicTopNav go={go} />
       <div style={{ padding: '40px 56px 80px' }}>
         <div className="row" style={{ marginBottom: 20, cursor: 'pointer' }} onClick={() => go('instructors')}>
@@ -815,19 +824,26 @@ const InstructorDetail = ({ instructorId, go }) => {
 // === Public top nav + footer (reusable) ===
 const PublicTopNav = ({ go }) => {
   const { tr } = useT();
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 56px', borderBottom: '1px solid var(--border)' }}>
+    <header className={`public-header ${scrolled ? 'scrolled' : ''}`}>
       <Brand role="SCHOOL OF CINEMA" onClick={() => go('landing')} />
-      <div className="row" style={{ gap: 28, fontSize: 14, fontWeight: 500 }}>
-        <a className="muted" style={{ cursor: 'pointer' }} onClick={() => go('browse')}>{tr('Courses', 'الكورسات')}</a>
-        <a className="muted" style={{ cursor: 'pointer' }} onClick={() => go('instructors')}>{tr('Instructors', 'المحاضرون')}</a>
-        <a className="muted" style={{ cursor: 'pointer' }} onClick={() => go('about')}>{tr('About', 'عن SOIC')}</a>
-      </div>
+      <nav className="row" style={{ gap: 28 }}>
+        <a className="nav-link" onClick={() => go('browse')}>{tr('Courses', 'الكورسات')}</a>
+        <a className="nav-link" onClick={() => go('instructors')}>{tr('Instructors', 'المحاضرون')}</a>
+        <a className="nav-link" onClick={() => go('about')}>{tr('About', 'عن SOIC')}</a>
+      </nav>
       <div className="row" style={{ gap: 10 }}>
         <button className="btn btn-ghost" onClick={() => go('auth-signin')}>{tr('Sign In', 'تسجيل الدخول')}</button>
         <button className="btn btn-primary" onClick={() => go('auth-signup')}>{tr('Get Started', 'ابدأ الآن')}</button>
       </div>
-    </div>
+    </header>
   );
 };
 

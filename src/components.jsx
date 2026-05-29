@@ -58,6 +58,10 @@ const Icon = ({ name, size = 18, ...props }) => {
     film: <path d="M3 3h18v18H3zM7 3v18M17 3v18M3 8h4M3 16h4M17 8h4M17 16h4M7 8h10v8H7z" />,
     award: <path d="M12 15a6 6 0 100-12 6 6 0 000 12zM8 13l-2 8 6-3 6 3-2-8" />,
     receipt: <path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2zM9 9h6M9 13h6M9 17h3" />,
+    menu: <path d="M3 6h18M3 12h18M3 18h18" />,
+    globe: <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18" />,
+    sun: <path d="M12 4v2M12 18v2M5 12H3M21 12h-2M6.3 6.3l1.4 1.4M16.3 16.3l1.4 1.4M6.3 17.7l1.4-1.4M16.3 7.7l1.4-1.4M16 12a4 4 0 11-8 0 4 4 0 018 0z" />,
+    moon: <path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" />,
     block: <path d="M12 22a10 10 0 110-20 10 10 0 010 20zM5 5l14 14" />,
   };
   return (
@@ -317,5 +321,127 @@ const Tabs = ({ tabs, active, onChange }) => (
     })}
   </div>
 );
+
+// === Persistent app header (Udemy style) ===
+const Header = ({ role, route, go, onMenuToggle, isLoggedIn, t, setTweak }) => {
+  const { tr, lang } = useT();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const publicNav = [
+    { id: 'browse', en: 'Browse courses', ar: 'تصفح الكورسات' },
+    { id: 'instructors', en: 'Instructors', ar: 'المحاضرون' },
+    { id: 'about', en: 'About', ar: 'عن SOIC' },
+  ];
+
+  return (
+    <header className="app-header">
+      {isLoggedIn && (
+        <button className="icon-btn menu-toggle" onClick={onMenuToggle} aria-label="Menu" title={tr('Menu', 'القائمة')}>
+          <Icon name="menu" size={20} />
+        </button>
+      )}
+
+      <div className="app-header__brand">
+        <div className="brand" onClick={() => go(isLoggedIn ? 'dashboard' : 'landing')} style={{ cursor: 'pointer' }}>
+          <div className="brand-mark"><img src="assets/soic-logo-transparent.png" alt="SOIC" /></div>
+          <div className="brand-text">
+            <div className="name">SOIC</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Left nav links — public only */}
+      {!isLoggedIn && (
+        <nav className="app-header__nav">
+          {publicNav.map(n => (
+            <a key={n.id}
+              className={`app-header__nav-link ${route === n.id ? 'active' : ''}`}
+              onClick={() => go(n.id)}>
+              {tr(n.en, n.ar)}
+            </a>
+          ))}
+        </nav>
+      )}
+
+      {/* Pill search */}
+      <div className="app-header__search" onClick={() => go(isLoggedIn ? 'browse' : 'browse')}>
+        <Icon name="search" size={18} />
+        <input placeholder={tr('Search for courses, instructors…', 'ابحث عن كورسات أو محاضرين…')} readOnly />
+      </div>
+
+      <div className="app-header__right">
+        {!isLoggedIn ? (
+          <>
+            <button className="btn btn-outline btn-sm" onClick={() => go('auth-signin')}>{tr('Log in', 'تسجيل الدخول')}</button>
+            <button className="btn btn-primary btn-sm" onClick={() => go('auth-signup')}>{tr('Sign up', 'إنشاء حساب')}</button>
+            <button className="icon-btn" onClick={() => setTweak('lang', t.lang === 'en' ? 'ar' : 'en')} title="Language">
+              <Icon name="globe" size={18} />
+            </button>
+          </>
+        ) : (
+          <>
+            <button className="icon-btn" onClick={() => go('learning')} title={tr('My learning', 'تعلّمي')}>
+              <Icon name="book" size={18} />
+            </button>
+            <button className="icon-btn" title={tr('Wishlist', 'قائمة الرغبات')}>
+              <Icon name="heart" size={18} />
+            </button>
+            <button className="icon-btn" title={tr('Notifications', 'الإشعارات')}>
+              <Icon name="bell" size={18} />
+              <span className="notif-dot"></span>
+            </button>
+
+            <div style={{ position: 'relative' }}>
+              <button className="icon-btn" onClick={() => setDropdownOpen(!dropdownOpen)} style={{ padding: 0, width: 'auto', height: 'auto' }} title={tr('Account', 'الحساب')}>
+                <Avatar name={ROLE_NAMES_LOCAL[role]?.name || 'You'} size="sm" />
+              </button>
+              {dropdownOpen && (
+                <>
+                  <div style={{ position: 'fixed', inset: 0, zIndex: 60 }} onClick={() => setDropdownOpen(false)}></div>
+                  <div style={{
+                    position: 'absolute', top: 'calc(100% + 8px)', right: 0, minWidth: 220,
+                    background: 'var(--surface)', border: '1px solid var(--border)',
+                    borderRadius: 12, padding: 6, boxShadow: 'var(--shadow-2)', zIndex: 70,
+                    direction: lang === 'ar' ? 'rtl' : 'ltr',
+                  }}>
+                    <div style={{ padding: '12px 12px 8px', borderBottom: '1px solid var(--border)' }}>
+                      <div style={{ fontSize: 14, fontWeight: 700 }}>{ROLE_NAMES_LOCAL[role]?.name}</div>
+                      <div className="muted" style={{ fontSize: 12, marginTop: 2 }}>{ROLE_NAMES_LOCAL[role]?.sub}</div>
+                    </div>
+                    <button className="nav-item" style={{ width: '100%' }}>
+                      <Icon name="user" size={15} />{tr('Profile', 'الملف الشخصي')}
+                    </button>
+                    <button className="nav-item" style={{ width: '100%' }}>
+                      <Icon name="settings" size={15} />{tr('Settings', 'الإعدادات')}
+                    </button>
+                    <button className="nav-item" style={{ width: '100%' }} onClick={() => setTweak('lang', lang === 'en' ? 'ar' : 'en')}>
+                      <Icon name="globe" size={15} />{tr('Switch to العربية', 'Switch to English')}
+                    </button>
+                    <button className="nav-item" style={{ width: '100%' }} onClick={() => setTweak('theme', t.theme === 'light' ? 'dark' : 'light')}>
+                      <Icon name={t.theme === 'light' ? 'moon' : 'sun'} size={15} />
+                      {t.theme === 'light' ? tr('Dark mode', 'الوضع الداكن') : tr('Light mode', 'الوضع الفاتح')}
+                    </button>
+                    <div style={{ height: 1, background: 'var(--border)', margin: '4px 0' }}></div>
+                    <button className="nav-item" style={{ width: '100%', color: 'var(--danger)' }} onClick={() => { setTweak('role', 'public'); setDropdownOpen(false); }}>
+                      <Icon name="logout" size={15} />{tr('Sign out', 'تسجيل الخروج')}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </header>
+  );
+};
+
+// Local copy of role display info for use in Header (mirrors app.jsx)
+const ROLE_NAMES_LOCAL = {
+  student: { name: 'Layla Khalid', sub: 'layla@example.com' },
+  instructor: { name: 'Dr. Hossam Dagher', sub: 'hossam@soic.eg' },
+  admin: { name: 'Admin Ops', sub: 'ops@soic.eg' },
+  public: { name: 'Guest', sub: '' },
+};
 
 export { Icon, Brand, ToastProvider, useToast, Modal, Avatar, CourseCard, CourseImage, StatTile, MiniChart, CalendarMonth, PageHeader, NavItem, Tabs, I18nProvider };

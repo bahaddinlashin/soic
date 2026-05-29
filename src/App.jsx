@@ -27,10 +27,10 @@ import {
 
 
 const DEFAULTS = /*EDITMODE-BEGIN*/{
-  "role": "public",
+  "role": "student",
   "accent": "#2d4ee0",
   "lang": "en",
-  "theme": "light",
+  "theme": "dark",
   "layout": "vertical",
   "sidebarHidden": false
 }/*EDITMODE-END*/;
@@ -165,7 +165,7 @@ const App = () => {
     view = (
       <>
         {showSidebar ? (
-          <AppShell role={role} route={route} go={setRoute} layout={t.layout} sidebarHidden={t.sidebarHidden} setTweak={setTweak}>
+          <AppShell role={role} route={route} go={setRoute} layout={t.layout} sidebarHidden={t.sidebarHidden} setTweak={setTweak} t={t}>
             <CourseDetail courseId={id} go={setRoute} role={role}
               onEnroll={() => handleEnroll(id)}
               onWishlist={() => handleWishlist(id)}
@@ -192,7 +192,7 @@ const App = () => {
     // App shell views
     view = (
       <>
-        <AppShell role={role} route={route} go={setRoute} layout={t.layout} sidebarHidden={t.sidebarHidden} setTweak={setTweak}>
+        <AppShell role={role} route={route} go={setRoute} layout={t.layout} sidebarHidden={t.sidebarHidden} setTweak={setTweak} t={t}>
           {role === 'student' && route === 'dashboard' && <StudentDashboard go={setRoute} enrolled={enrolled} wishlist={wishlist} />}
           {role === 'student' && route === 'browse' && <StudentBrowse go={setRoute} enrolled={enrolled} wishlist={wishlist} />}
           {role === 'student' && route === 'calendar' && <StudentCalendar go={setRoute} />}
@@ -229,129 +229,57 @@ const App = () => {
   );
 };
 
-const AppShell = ({ role, route, go, children, layout, sidebarHidden, setTweak }) => {
+const AppShell = ({ role, route, go, children, layout, sidebarHidden, setTweak, t }) => {
   const { tr, lang } = useT();
   const nav = NAV[role] || [];
   const roleInfo = ROLE_NAMES[role];
-  const isHorizontal = layout === 'horizontal';
-  const isHidden = !isHorizontal && sidebarHidden;
+  const isPublic = role === 'public';
+  const [drawerOpen, setDrawerOpen] = useStateApp(false);
 
-  // Mini icon buttons used in both layouts
-  const LayoutToggle = (
-    <button onClick={() => setTweak('layout', isHorizontal ? 'vertical' : 'horizontal')}
-      className="btn btn-ghost"
-      style={{ width: 32, height: 32, borderRadius: 8, padding: 0, color: 'var(--text-muted)' }}
-      title={tr(isHorizontal ? 'Switch to sidebar' : 'Switch to top menu', isHorizontal ? 'تبديل إلى قائمة جانبية' : 'تبديل إلى قائمة علوية')}>
-      {isHorizontal
-        // Sidebar icon
-        ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="7" height="16" rx="1.5" /><rect x="12" y="4" width="9" height="16" rx="1.5" fill="currentColor" opacity="0.15" /></svg>
-        // Topbar icon
-        : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="6" rx="1.5" fill="currentColor" opacity="0.15" /><rect x="3" y="11" width="18" height="10" rx="1.5" /></svg>
-      }
-    </button>
-  );
+  // Close drawer on route change
+  useEffectApp(() => { setDrawerOpen(false); }, [route]);
 
-  const HideToggle = !isHorizontal && (
-    <button onClick={() => setTweak('sidebarHidden', !sidebarHidden)}
-      className="btn btn-ghost"
-      style={{ width: 32, height: 32, borderRadius: 8, padding: 0, color: 'var(--text-muted)' }}
-      title={tr('Hide menu', 'إخفاء القائمة')}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        {lang === 'ar' ? <path d="M9 6l6 6-6 6" /> : <path d="M15 6l-6 6 6 6" />}
-      </svg>
-    </button>
-  );
-
-  // === Horizontal (topbar) layout ===
-  if (isHorizontal) {
-    return (
-      <div data-screen-label={`${role}-${route}`} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <header style={{
-          background: 'var(--surface)', borderBottom: '1px solid var(--border)',
-          padding: '10px 24px', display: 'flex', alignItems: 'center', gap: 18, position: 'sticky', top: 0, zIndex: 10,
-        }}>
-          <Brand role={roleInfo?.display?.[lang] || roleInfo?.display?.en} onClick={() => go('dashboard')} />
-          <nav className="row" style={{ gap: 2, marginInlineStart: 16, flex: 1, overflowX: 'auto' }}>
-            {nav.map(n => {
-              const active = route === n.id;
-              return (
-                <button key={n.id} onClick={() => go(n.id)} style={{
-                  padding: '8px 14px', borderRadius: 8, fontSize: 14, fontWeight: 500, whiteSpace: 'nowrap',
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  color: active ? 'var(--text)' : 'var(--text-muted)',
-                  background: active ? 'var(--accent-soft)' : 'transparent',
-                  position: 'relative',
-                }}>
-                  <Icon name={n.icon} size={15} />
-                  {tr(n.en, n.ar)}
-                  {n.badge && <span style={{ background: 'var(--accent)', color: '#fff', fontSize: 10, padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>{n.badge}</span>}
-                  {active && <span style={{ position: 'absolute', left: 14, right: 14, bottom: -11, height: 2, background: 'var(--accent-bright)', borderRadius: 2 }}></span>}
-                </button>
-              );
-            })}
-          </nav>
-          <div className="row" style={{ gap: 8, marginInlineEnd: 200 /* leave room for DemoControls */ }}>
-            {LayoutToggle}
-            <div style={{ width: 1, height: 24, background: 'var(--border)' }}></div>
-            <div className="row" style={{ gap: 10 }}>
-              <Avatar name={roleInfo?.name || 'You'} size="sm" />
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 600 }}>{roleInfo?.name}</div>
-                <div className="dim" style={{ fontSize: 10 }}>{roleInfo?.display?.[lang] || roleInfo?.display?.en}</div>
-              </div>
-            </div>
+  const sidebarContent = !isPublic && (
+    <>
+      <div className="nav-section">{tr('Main', 'الرئيسي')}</div>
+      {nav.map(n => <NavItem key={n.id} icon={n.icon} label={tr(n.en, n.ar)} active={route === n.id} onClick={() => go(n.id)} badge={n.badge} />)}
+      <div style={{ marginTop: 'auto', paddingTop: 20, borderTop: '1px solid var(--border)' }}>
+        <div className="nav-section" style={{ paddingTop: 0 }}>{tr('Account', 'الحساب')}</div>
+        <NavItem icon="settings" label={tr('Settings', 'الإعدادات')} onClick={() => {}} />
+        <NavItem icon="logout" label={tr('Sign out', 'تسجيل الخروج')} onClick={() => setTweak('role', 'public')} />
+        <div className="card flat" style={{ padding: 10, marginTop: 12, display: 'flex', gap: 10, alignItems: 'center' }}>
+          <Avatar name={roleInfo?.name || 'You'} size="sm" />
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 600 }}>{roleInfo?.name}</div>
+            <div className="dim" style={{ fontSize: 11, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{roleInfo?.display?.[lang] || roleInfo?.display?.en}</div>
           </div>
-        </header>
-        <main className="main" style={{ flex: 1 }}>{children}</main>
+        </div>
       </div>
-    );
-  }
+    </>
+  );
 
-  // === Vertical (sidebar) layout — possibly hidden ===
   return (
-    <div className={isHidden ? 'app no-sidebar' : 'app'} data-screen-label={`${role}-${route}`}>
-      {!isHidden && (
-        <aside className="sidebar">
-          <div className="row" style={{ justifyContent: 'space-between', paddingInlineEnd: 4 }}>
-            <Brand role={roleInfo?.display?.[lang] || roleInfo?.display?.en} onClick={() => go('dashboard')} />
-            <div className="row" style={{ gap: 2 }}>
-              {LayoutToggle}
-              {HideToggle}
-            </div>
-          </div>
-          <div className="nav-section">{tr('Main', 'الرئيسي')}</div>
-          {nav.map(n => <NavItem key={n.id} icon={n.icon} label={tr(n.en, n.ar)} active={route === n.id} onClick={() => go(n.id)} badge={n.badge} />)}
-
-          <div style={{ marginTop: 'auto', paddingTop: 24, borderTop: '1px solid var(--border)' }}>
-            <div className="nav-section" style={{ paddingTop: 0 }}>{tr('Account', 'الحساب')}</div>
-            <NavItem icon="settings" label={tr('Settings', 'الإعدادات')} onClick={() => {}} />
-            <NavItem icon="logout" label={tr('Sign out', 'تسجيل الخروج')} onClick={() => {}} />
-
-            <div className="card flat" style={{ padding: 12, marginTop: 14, display: 'flex', gap: 10, alignItems: 'center' }}>
-              <Avatar name={roleInfo?.name || 'You'} size="sm" />
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 600 }}>{roleInfo?.name}</div>
-                <div className="dim" style={{ fontSize: 11, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{roleInfo?.sub}</div>
-              </div>
-            </div>
-          </div>
-        </aside>
-      )}
-      <main className="main">
-        {isHidden && (
-          <button onClick={() => setTweak('sidebarHidden', false)}
-            className="btn btn-secondary"
-            style={{
-              position: 'fixed', top: 16, [lang === 'ar' ? 'right' : 'left']: 16, zIndex: 80,
-              padding: '8px 12px', borderRadius: 10,
-            }}
-            title={tr('Show menu', 'إظهار القائمة')}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
-            <span style={{ marginInlineStart: 6 }}>{tr('Menu', 'القائمة')}</span>
-          </button>
+    <div className="layout" data-screen-label={`${role}-${route}`}>
+      <Header
+        role={role}
+        route={route}
+        go={go}
+        isLoggedIn={!isPublic}
+        t={t}
+        setTweak={setTweak}
+        onMenuToggle={() => setDrawerOpen(o => !o)}
+      />
+      <div className={`layout__body ${isPublic || sidebarHidden ? 'no-sidebar' : ''}`}>
+        {!isPublic && !sidebarHidden && (
+          <>
+            <aside className={`sidebar ${drawerOpen ? 'is-open' : ''}`}>
+              {sidebarContent}
+            </aside>
+            {drawerOpen && <div className="sidebar-backdrop" onClick={() => setDrawerOpen(false)} />}
+          </>
         )}
-        {children}
-      </main>
+        <main className="main">{children}</main>
+      </div>
     </div>
   );
 };
