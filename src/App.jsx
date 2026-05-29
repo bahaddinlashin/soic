@@ -3,7 +3,7 @@ import React, { useState as useStateApp, useEffect as useEffectApp, useState as 
 import { SOIC_DATA, fmtEGP, fmtDate, fmtShortDate, initials } from './data.js';
 import {
   Icon, Brand, Avatar, CourseCard, CourseImage, StatTile, MiniChart,
-  PageHeader, NavItem, Tabs, useToast, useT, I18nProvider, Modal
+  PageHeader, NavItem, Tabs, useToast, useT, I18nProvider, Modal, Header
 } from './components.jsx';
 import {
   Landing, BrowseCourses, CourseDetail, Auth,
@@ -27,7 +27,7 @@ import {
 
 
 const DEFAULTS = /*EDITMODE-BEGIN*/{
-  "role": "student",
+  "role": "public",
   "accent": "#2d4ee0",
   "lang": "en",
   "theme": "dark",

@@ -83,7 +83,7 @@ const LiveStudent = ({ go }) => {
               <div style={{ position: 'absolute', bottom: 6, left: 8, fontSize: 11, fontWeight: 600, color: '#fff' }}>Hossam Dagher · Host</div>
             </div>
             {/* Live time top-left */}
-            <div style={{ position: 'absolute', top: 12, left: 12 }} className="row" style={{ gap: 8 }}>
+            <div style={{ position: 'absolute', top: 12, left: 12, gap: 8 }} className="row">
               <span className="live-dot"></span>
               <span style={{ fontSize: 11, color: '#fff', fontWeight: 700, letterSpacing: '0.15em' }}>LIVE · 14:32</span>
             </div>
@@ -295,7 +295,7 @@ const LiveInstructor = ({ go }) => {
                 <Avatar name="Hossam Dagher" size="lg" tint="#fff" />
               </div>
             )}
-            <div style={{ position: 'absolute', top: 12, left: 12 }} className="row" style={{ gap: 8 }}>
+            <div style={{ position: 'absolute', top: 12, left: 12, gap: 8 }} className="row">
               <span className="live-dot"></span>
               <span style={{ fontSize: 11, color: '#fff', fontWeight: 700, letterSpacing: '0.15em' }}>BROADCASTING TO {participants.length}</span>
             </div>

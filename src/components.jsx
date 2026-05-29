@@ -444,4 +444,4 @@ const ROLE_NAMES_LOCAL = {
   public: { name: 'Guest', sub: '' },
 };
 
-export { Icon, Brand, ToastProvider, useToast, Modal, Avatar, CourseCard, CourseImage, StatTile, MiniChart, CalendarMonth, PageHeader, NavItem, Tabs, I18nProvider };
+export { Icon, Brand, ToastProvider, useToast, Modal, Avatar, CourseCard, CourseImage, StatTile, MiniChart, CalendarMonth, PageHeader, NavItem, Tabs, I18nProvider, Header };
